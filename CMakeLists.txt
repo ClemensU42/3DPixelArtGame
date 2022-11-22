@@ -6,10 +6,10 @@ set(CMAKE_CXX_STANDARD 14)
 add_subdirectory(vendor/glfw-3.3.8)
 add_subdirectory(vendor/glm)
 
-set(SOURCES main.cpp vendor/glad/src/glad.c)
+set(SOURCES main.cpp vendor/glad/src/glad.c src/Application.cpp include/Application.h)
 
 add_executable(PixelArt3DGame WIN32 ${SOURCES})
 
-target_include_directories(${PROJECT_NAME} PUBLIC vendor/glm/glm vendor/glfw-3.3.8/include vendor/glad/include)
+target_include_directories(${PROJECT_NAME} PUBLIC vendor/glm/glm vendor/glfw-3.3.8/include vendor/glad/include include)
 
 target_link_libraries(${PROJECT_NAME} glfw)
