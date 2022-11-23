@@ -6,7 +6,7 @@
 
 int main() {
 
-	Engine::Application app;
+	Engine::Core::Application app;
 
 	app.init();
 	while(!glfwWindowShouldClose(app.window)){
