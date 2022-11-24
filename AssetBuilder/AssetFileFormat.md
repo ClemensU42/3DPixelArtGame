@@ -16,6 +16,7 @@ The header contains general information about the file:
 The Asset List contains entries for each asset:
 Each entry consists of:
   - Entry size (in bytes) (uint16)
+  - Data size (in bytes) (uint64)
   - Data pointer (uint64)
   - Identifier (relative file path) (zero terminated string)
 
