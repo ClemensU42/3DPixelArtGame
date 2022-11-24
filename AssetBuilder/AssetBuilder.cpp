@@ -18,7 +18,7 @@ struct assetEntry{
 	uint16_t entrySize;
 	uint64_t dataSize;
 	uint64_t dataPointer;
-	const char* identifier;
+	std::string identifier;
 };
 
 struct assetList{
@@ -29,10 +29,30 @@ struct dataList{
 	uint8_t* data;
 };
 
+std::vector<std::string> files;
+
+void collectFilesFromDir(std::string dir){
+	for(const std::filesystem::directory_entry& entry : std::filesystem::directory_iterator(dir)){
+		if(std::filesystem::is_directory(entry.path())) {
+			collectFilesFromDir(entry.path().string());
+		} else {
+			files.push_back(entry.path().string());
+		}
+	}
+}
+
+// argv[1] is the output file
+// argv[2] is the asset directory
 int main(int argc, const char** argv){
-	if(argc != 2){
+	if(argc != 3){
 		std::cout << "Wrong arguments provided!" << std::endl;
 		return -1;
 	}
+
+	std::cout << "Collecting files" << std::endl;
+	std::string path = argv[2];
+	collectFilesFromDir(path);
+
+
 	return 0;
 }
