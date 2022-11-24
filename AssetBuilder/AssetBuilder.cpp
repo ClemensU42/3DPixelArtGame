@@ -6,6 +6,8 @@
 #include <iostream>
 #include <filesystem>
 
+#define MAGIC_NUMBER 0x61736574
+
 struct assetHeader{
 	uint64_t magicNum;
 	uint64_t filesize;
@@ -49,10 +51,37 @@ int main(int argc, const char** argv){
 		return -1;
 	}
 
-	std::cout << "Collecting files" << std::endl;
+	assetHeader header;
+	assetList assets;
+	dataList data;
+
+	std::cout << "Collecting files..." << std::endl;
 	std::string path = argv[2];
 	collectFilesFromDir(path);
 
+	std::cout << "Creating entries..." << std::endl;
+	assets.entries = (assetEntry*)malloc(files.size() * sizeof(assetEntry));
+	int i = 0;
+	for(const std::string file : files){
+		assets.entries[i].dataSize = std::filesystem::file_size(file);
+		assets.entries[i].identifier = file;
+		assets.entries[i].entrySize = sizeof(uint16_t) + sizeof(uint64_t) * 2 + file.size();
+		i++;
+	}
 
+	std::cout << "Creating header..." << std::endl;
+	header.magicNum = MAGIC_NUMBER;
+	header.assetListEntryAmount = files.size();
+	header.dataListSize = 0;
+	for(int j = 0; j < header.assetListEntryAmount; j++){
+		header.dataListSize += assets.entries[j].entrySize;
+	}
+	header.filesize = sizeof(assetHeader) + header.dataListSize + header.assetListSize;
+
+	std::cout << "Collecting Data" << std::endl;
+
+
+
+	free(assets.entries);
 	return 0;
 }
