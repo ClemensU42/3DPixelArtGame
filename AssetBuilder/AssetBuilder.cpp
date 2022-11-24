@@ -14,6 +14,21 @@ struct assetHeader{
 	uint32_t assetListEntryAmount;
 };
 
+struct assetEntry{
+	uint16_t entrySize;
+	uint64_t dataSize;
+	uint64_t dataPointer;
+	const char* identifier;
+};
+
+struct assetList{
+	assetEntry* entries;
+};
+
+struct dataList{
+	uint8_t* data;
+};
+
 int main(int argc, const char** argv){
 	if(argc != 2){
 		std::cout << "Wrong arguments provided!" << std::endl;
