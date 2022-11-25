@@ -54,8 +54,8 @@ void collectFilesFromDir(std::string dir){
 
 void writeEntryToFile(std::fstream* stream, assetEntry* entry){
 	stream->write(reinterpret_cast<char*>(&entry->entrySize), 2);
-	stream->write(reinterpret_cast<char*>(&entry->dataSize), 4);
-	stream->write(reinterpret_cast<char*>(&entry->dataPointer), 4);
+	stream->write(reinterpret_cast<char*>(&entry->dataSize), 8);
+	stream->write(reinterpret_cast<char*>(&entry->dataPointer), 8);
 	stream->write(entry->identifier->c_str(), entry->identifier->size());
 }
 
