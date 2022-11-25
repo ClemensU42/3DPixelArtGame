@@ -88,8 +88,10 @@ int main(int argc, const char** argv){
 	header.magicNum = MAGIC_NUMBER;
 	header.assetListEntryAmount = files.size();
 	header.dataListSize = 0;
+	header.assetListSize = 0;
 	for(int j = 0; j < header.assetListEntryAmount; j++){
-		header.dataListSize += assets[j].entrySize;
+		header.dataListSize += assets[j].dataSize;
+		header.assetListSize += assets[j].entrySize;
 	}
 	header.filesize = sizeof(assetHeader) + header.dataListSize + header.assetListSize;
 

@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 14)
 add_subdirectory(vendor/glfw-3.3.8)
 add_subdirectory(vendor/glm)
 
-set(SOURCES main.cpp vendor/glad/src/glad.c src/Application.cpp include/Application.h src/Engine/Graphics/Mesh.cpp include/Engine/Graphics/Mesh.h include/Engine/Graphics/Shader.h src/Engine/Graphics/Shader.cpp)
+set(SOURCES main.cpp vendor/glad/src/glad.c src/Application.cpp include/Application.h src/Engine/Graphics/Mesh.cpp include/Engine/Graphics/Mesh.h include/Engine/Graphics/Shader.h src/Engine/Graphics/Shader.cpp src/Engine/Assets/AssetManager.cpp include/Engine/Assets/AssetManager.h)
 
 add_executable(PixelArt3DGame WIN32 ${SOURCES})
 
