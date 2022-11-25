@@ -68,7 +68,7 @@ int main(int argc, const char** argv){
 	}
 
 	assetHeader header{};
-	assetList assets{};
+	std::vector<assetEntry> assets;
 	dataList data{};
 
 	std::cout << "Collecting files..." << std::endl;
@@ -76,12 +76,12 @@ int main(int argc, const char** argv){
 	collectFilesFromDir(path);
 
 	std::cout << "Creating entries..." << std::endl;
-	assets.entries = (assetEntry*)malloc(files.size() * sizeof(assetEntry));
 	for(int i = 0; i < files.size(); i++){
-		assets.entries[i].dataSize = std::filesystem::file_size(files[i]);
-		assets.entries[i].identifier = &files[i];
-		assets.entries[i].entrySize = sizeof(uint16_t) + sizeof(uint64_t) * 2 + files[i].size();
-		i++;
+		assetEntry ent{};
+		ent.dataSize = std::filesystem::file_size(files[i]);
+		ent.identifier = &files[i];
+		ent.entrySize = sizeof(uint16_t) + sizeof(uint64_t) * 2 + files[i].size();
+		assets.push_back(ent);
 	}
 
 	std::cout << "Creating header..." << std::endl;
@@ -89,7 +89,7 @@ int main(int argc, const char** argv){
 	header.assetListEntryAmount = files.size();
 	header.dataListSize = 0;
 	for(int j = 0; j < header.assetListEntryAmount; j++){
-		header.dataListSize += assets.entries[j].entrySize;
+		header.dataListSize += assets[j].entrySize;
 	}
 	header.filesize = sizeof(assetHeader) + header.dataListSize + header.assetListSize;
 
@@ -97,8 +97,8 @@ int main(int argc, const char** argv){
 	data.data = (uint8_t*)malloc(header.dataListSize);
 	uint64_t dataPos = 0;
 	for(int j = 0; j < header.assetListEntryAmount; j++){
-		assets.entries[j].dataPointer = dataPos;
-		std::ifstream ifs = std::ifstream(*assets.entries[j].identifier, std::ios::binary);
+		assets[j].dataPointer = dataPos;
+		std::ifstream ifs = std::ifstream(*assets[j].identifier, std::ios::binary);
 		if(ifs.is_open()){
 			uint8_t c;
 			c = ifs.get();
@@ -108,8 +108,7 @@ int main(int argc, const char** argv){
 			}
 			ifs.close();
 		} else {
-			std::cout << assets.entries[j].identifier << " could not be opened!!! Aborting..." << std::endl;
-			free(assets.entries);
+			std::cout << assets[j].identifier << " could not be opened!!! Aborting..." << std::endl;
 			free(data.data);
 			return -1;
 		}
@@ -119,13 +118,12 @@ int main(int argc, const char** argv){
 	std::fstream assetFile(argv[1], std::ios::out);
 	assetFile.write(reinterpret_cast<char*>(&header), sizeof(header));
 	for(int j = 0; j < header.assetListEntryAmount; j++){
-		writeEntryToFile(&assetFile, &assets.entries[j]);
+		writeEntryToFile(&assetFile, &assets[j]);
 	}
 	assetFile.write(reinterpret_cast<char*>(data.data), header.dataListSize);
 	assetFile.close();
 
 	std::cout << "Done!\nCreated asset file at: " << argv[1] << std::endl;
-	free(assets.entries);
 	free(data.data);
 	return 0;
 }
