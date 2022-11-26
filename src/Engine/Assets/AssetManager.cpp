@@ -16,13 +16,13 @@ namespace Engine {
 		size_t bufferLength = 1024; // starting size of read buffer is 1024 bytes / 1 kb
 
 		AssetHeader header{};
-		std::vector<AssetEntry> assetEntries;
 
 		std::unordered_map<std::string, Asset> assetMap;
+		std::unordered_map<std::string, AssetEntry> assetEntries;
 
 		std::ifstream file;
 
-		uint64_t dataBegin = 0;
+		int64_t dataBegin = 0;
 
 		void ensureBufferSize(size_t size) {
 			while (bufferLength < size) {
@@ -43,25 +43,38 @@ namespace Engine {
 
 				std::string identifier = readString(entry.entrySize - 18);
 				entry.identifier = identifier;
-				assetEntries.push_back(entry);
+				assetEntries.insert(std::pair<std::string, AssetEntry>(identifier, entry));
 			}
 			dataBegin = file.tellg();
 		}
 
-		void loadAsset(std::string identifier) {
-
+		void loadAsset(const std::string& identifier) {
+			AssetEntry entry = assetEntries[identifier];
+			Asset asset{};
+			asset.assetSize = entry.dataSize;
+			asset.data = malloc(asset.assetSize);
+			file.seekg(dataBegin + entry.dataPointer);
+			file.read(static_cast<char*>(asset.data), asset.assetSize);
+			assetMap.insert(std::pair<std::string, Asset>(identifier, asset));
 		}
 
-		void unloadAsset(std::string Identifier) {
-
+		void unloadAsset(const std::string& identifier) {
+			free(assetMap[identifier].data);
+			assetMap.erase(identifier);
 		}
 
 		void unloadAllAssets() {
-
+			for(std::pair<std::string, Asset> p : assetMap){
+				free(p.second.data);
+			}
+			assetMap.clear();
 		}
 
-		Asset getAsset(std::string identifier) {
-
+		Asset getAsset(const std::string& identifier) {
+			if(assetMap.find(identifier) != assetMap.end()){
+				loadAsset(identifier);
+			}
+			return assetMap[identifier];
 		}
 
 		uint8_t readUint8_t() {
