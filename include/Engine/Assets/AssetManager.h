@@ -29,16 +29,16 @@ namespace Engine{
 #pragma pack(pop)
 
 		struct Asset{
-			uint64_t assentSize;
+			uint64_t assetSize;
 			void* data;
 		};
 
 
 		void openAssetFile(const char* path);
-		void loadAsset(std::string identifier);
-		void unloadAsset(std::string Identifier);
+		void loadAsset(const std::string& identifier);
+		void unloadAsset(const std::string& identifier);
 		void unloadAllAssets();
-		Asset getAsset(std::string identifier);
+		Asset getAsset(const std::string& identifier);
 
 		uint8_t readUint8_t();
 		uint16_t readUint16_t();
