@@ -49,6 +49,7 @@ namespace Engine {
 		}
 
 		void loadAsset(const std::string& identifier) {
+			std::cout << "loading asset: " << identifier << std::endl;
 			AssetEntry entry = assetEntries[identifier];
 			Asset asset{};
 			asset.assetSize = entry.dataSize;
@@ -71,7 +72,7 @@ namespace Engine {
 		}
 
 		Asset getAsset(const std::string& identifier) {
-			if(assetMap.find(identifier) != assetMap.end()){
+			if(assetMap.find(identifier) == assetMap.end()){
 				loadAsset(identifier);
 			}
 			return assetMap[identifier];
