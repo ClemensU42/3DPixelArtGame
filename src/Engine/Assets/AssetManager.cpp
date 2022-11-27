@@ -27,6 +27,10 @@ namespace Engine {
 		void ensureBufferSize(size_t size) {
 			while (bufferLength < size) {
 				buffer = (char *) realloc(buffer, bufferLength * 2);
+				if(buffer == NULL){
+					std::cout << "Error requesting memory for asset manager buffer!" << std::endl;
+					exit(-1);
+				}
 				bufferLength *= 2;
 			}
 		}
