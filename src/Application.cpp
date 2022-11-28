@@ -2,6 +2,8 @@
 // Created by Clemens on 22.11.2022.
 //
 
+#include "tracy/Tracy.hpp"
+
 #include <iostream>
 #include "Application.h"
 
@@ -37,11 +39,12 @@ namespace Engine {
 		}
 
 		void Application::update() {
+			ZoneScopedN("update");
 			glfwPollEvents();
 		}
 
 		void Application::render() {
-
+			ZoneScopedN("render");
 			glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
 

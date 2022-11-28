@@ -1,3 +1,5 @@
+#include "tracy/Tracy.hpp"
+
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -6,18 +8,17 @@
 #include "Engine/Assets/AssetManager.h"
 
 int main() {
-
-	/*
 	Engine::Core::Application app;
 
 	app.init();
 	while(!glfwWindowShouldClose(app.window)){
 		app.update();
 		app.render();
+		FrameMark;
 	}
 	app.end();
 
-	 */
+
 
 	Engine::Asset::openAssetFile("assets.asset");
 	Engine::Asset::Asset asset = Engine::Asset::getAsset(R"(.\Assets\game\test.txt)");
