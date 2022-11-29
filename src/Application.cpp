@@ -36,6 +36,7 @@ namespace Engine {
 			glViewport(0, 0, windowWidth, windowHeight);
 
 			glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
+
 		}
 
 		void Application::update() {
