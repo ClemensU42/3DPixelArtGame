@@ -6,6 +6,7 @@
 #define PIXELART3DGAME_MESH_H
 
 #include <vector>
+#include "Engine/Graphics/Shader.h"
 
 namespace Engine{
 	namespace Graphics{
@@ -13,17 +14,16 @@ namespace Engine{
 		public:
 			unsigned int VBO;
 			unsigned int VAO;
+			unsigned int EBO;
+			Engine::Graphics::Shader* shader;
+
+			std::vector<float> vertices;
+			std::vector<unsigned int> indices;
 
 		public:
-			void loadMeshFromVectors(std::vector<float> vertices, std::vector<int> indices);
+			void loadMeshFromVectors(std::vector<float> verticesArg, std::vector<unsigned int> indicesArg, unsigned int type);
 			void render();
 
-		};
-
-		enum MESH_TYPE{
-			STATIC,
-			DYNAMIC,
-			STREAM
 		};
 	}
 }

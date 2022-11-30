@@ -6,9 +6,27 @@
 
 #include <iostream>
 #include "Application.h"
+#include "Engine/Assets/AssetManager.h"
+#include "Engine/Graphics/Mesh.h"
 
 namespace Engine {
 	namespace Core {
+
+		Graphics::Mesh testMesh;
+		Graphics::Shader testShader;
+
+		std::vector<float> vertices = {
+				0.5f, 0.5f, 0.0f,
+				0.5f, -0.5f, 0.0f,
+				-0.5f, -0.5f, 0.0f,
+				-0.5f, 0.5f, 0.0f
+		};
+
+		std::vector<unsigned int> indices = {
+				0, 1, 3,
+				1, 2, 3
+		};
+
 		void framebufferSizeCallback(GLFWwindow *window, int width, int height) {
 			glViewport(0, 0, width, height);
 		}
@@ -37,6 +55,15 @@ namespace Engine {
 
 			glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 
+
+			Engine::Asset::openAssetFile("assets.asset");
+
+			Engine::Asset::Asset fragmentShaderAsset = Engine::Asset::getAsset(R"(game\shaders\fallback.frag)");
+			Engine::Asset::Asset vertexShaderAsset = Engine::Asset::getAsset(R"(game\shaders\fallback.vert)");
+			testShader.loadFromAsset(vertexShaderAsset, fragmentShaderAsset);
+
+			testMesh.loadMeshFromVectors(vertices, indices, GL_STATIC_DRAW);
+			testMesh.shader = &testShader;
 		}
 
 		void Application::update() {
@@ -48,6 +75,8 @@ namespace Engine {
 			ZoneScopedN("render");
 			glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
+
+			testMesh.render();
 
 			glfwSwapBuffers(window);
 		}
