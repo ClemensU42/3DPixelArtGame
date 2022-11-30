@@ -4,6 +4,7 @@
 
 #define MAGIC_NUMBER 0x61736574
 #include <vector>
+#include <regex>
 #include <fstream>
 #include <unordered_map>
 #include <iostream>
@@ -45,7 +46,7 @@ namespace Engine {
 				entry.dataSize = readUint64_t();
 				entry.dataPointer = readUint64_t();
 
-				std::string identifier = readString(entry.entrySize - 18);
+				std::string identifier = readString(entry.entrySize - 17);
 				entry.identifier = identifier;
 				assetEntries.insert(std::pair<std::string, AssetEntry>(identifier, entry));
 			}
@@ -82,6 +83,10 @@ namespace Engine {
 			return assetMap[identifier];
 		}
 
+		std::string readAssetAsString(const Asset* asset){
+			return {(char*)asset->data, 0, asset->assetSize};
+		}
+
 		uint8_t readUint8_t() {
 			ensureBufferSize(1);
 			file.read(buffer, 1);
@@ -107,9 +112,15 @@ namespace Engine {
 		}
 
 		std::string readString(int64_t length) {
-			ensureBufferSize(length + 1); // + 1 to accommodate the \0
-			file.read(buffer, length);
-			buffer[length] = '\0';
+			ensureBufferSize(length);
+			char c;
+			int i = 0;
+			file.read(&c, 1);
+			while(c){
+				buffer[i++] = c;
+				file.read(&c, 1);
+			}
+			buffer[i] = '\0';
 			std::string result = buffer;
 			return result;
 		}

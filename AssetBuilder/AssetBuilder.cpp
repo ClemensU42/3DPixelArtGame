@@ -6,6 +6,7 @@
 #include <iostream>
 #include <filesystem>
 #include <fstream>
+#include <string.h>
 
 #define MAGIC_NUMBER 0x61736574
 
@@ -41,6 +42,7 @@ struct dataList{
 #pragma pack(pop)
 
 std::vector<std::string> files;
+const char* assetDirName = R"(Assets\)";
 
 void collectFilesFromDir(std::string dir){
 	for(const std::filesystem::directory_entry& entry : std::filesystem::directory_iterator(dir)){
@@ -56,7 +58,7 @@ void writeEntryToFile(std::fstream* stream, assetEntry* entry){
 	stream->write(reinterpret_cast<char*>(&entry->entrySize), 2);
 	stream->write(reinterpret_cast<char*>(&entry->dataSize), 8);
 	stream->write(reinterpret_cast<char*>(&entry->dataPointer), 8);
-	stream->write(entry->identifier->c_str(), entry->identifier->size());
+	stream->write(entry->identifier->c_str(), entry->identifier->size()+1);
 }
 
 // argv[1] is the output file
@@ -79,8 +81,9 @@ int main(int argc, const char** argv){
 	for(int i = 0; i < files.size(); i++){
 		assetEntry ent{};
 		ent.dataSize = std::filesystem::file_size(files[i]);
+		std::cout << ent.dataSize << std::endl;
 		ent.identifier = &files[i];
-		ent.entrySize = sizeof(uint16_t) + sizeof(uint64_t) * 2 + files[i].size();
+		ent.entrySize = sizeof(uint16_t) + sizeof(uint64_t) * 2;
 		assets.push_back(ent);
 	}
 
@@ -91,21 +94,24 @@ int main(int argc, const char** argv){
 	header.assetListSize = 0;
 	for(int j = 0; j < header.assetListEntryAmount; j++){
 		header.dataListSize += assets[j].dataSize;
-		header.assetListSize += assets[j].entrySize;
 	}
-	header.filesize = sizeof(assetHeader) + header.dataListSize + header.assetListSize;
+
 
 	std::cout << "Collecting Data..." << std::endl;
 	data.data = (uint8_t*)malloc(header.dataListSize);
 	uint64_t dataPos = 0;
 	for(int j = 0; j < header.assetListEntryAmount; j++){
-		assets[j].dataPointer = dataPos;
+		if(j == 0)
+			assets[j].dataPointer = 0;
+		else
+			assets[j].dataPointer = assets[j-1].dataSize;
 		std::ifstream ifs = std::ifstream(*assets[j].identifier, std::ios::binary);
 		if(ifs.is_open()){
 			uint8_t c;
 			c = ifs.get();
 			while(!ifs.eof()){
-				data.data[dataPos++] = c;
+				if(data.data[dataPos - 1] != 0x0D && c != 0x0D)
+					data.data[dataPos++] = c;
 				c = ifs.get();
 			}
 			ifs.close();
@@ -115,6 +121,15 @@ int main(int argc, const char** argv){
 			return -1;
 		}
 	}
+
+	std::cout << "Updating Identifiers and Header..." << std::endl;
+	for(int i = 0; i < assets.size(); i++){
+		size_t pos = assets[i].identifier->find(assetDirName) + strlen(assetDirName);
+		assets[i].identifier->erase(0, pos);
+		assets[i].entrySize += assets[i].identifier->size()+1;
+		header.assetListSize += assets[i].entrySize;
+	}
+	header.filesize = sizeof(assetHeader) + header.dataListSize + header.assetListSize;
 
 	std::cout << "Creating asset file..." << std::endl;
 	std::fstream assetFile(argv[1], std::ios::out);

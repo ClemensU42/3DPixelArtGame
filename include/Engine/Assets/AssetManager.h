@@ -39,6 +39,7 @@ namespace Engine{
 		void unloadAsset(const std::string& identifier);
 		void unloadAllAssets();
 		Asset getAsset(const std::string& identifier);
+		std::string readAssetAsString(const Asset* asset);
 
 		uint8_t readUint8_t();
 		uint16_t readUint16_t();

@@ -17,10 +17,5 @@ int main() {
 		FrameMark;
 	}
 	app.end();
-
-
-
-	Engine::Asset::openAssetFile("assets.asset");
-
 	return 0;
 }
