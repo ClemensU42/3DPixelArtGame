@@ -43,6 +43,7 @@ struct dataList{
 
 std::vector<std::string> files;
 const char* assetDirName = R"(Assets\)";
+const std::string textFiles[] = {".txt", ".json", ".frag", ".vert"};
 
 void collectFilesFromDir(std::string dir){
 	for(const std::filesystem::directory_entry& entry : std::filesystem::directory_iterator(dir)){
@@ -110,7 +111,7 @@ int main(int argc, const char** argv){
 			uint8_t c;
 			c = ifs.get();
 			while(!ifs.eof()){
-				if(data.data[dataPos - 1] != 0x0D && c != 0x0D)
+				//if(data.data[dataPos - 1] != 0x0D && c != 0x0D)
 					data.data[dataPos++] = c;
 				c = ifs.get();
 			}
@@ -132,7 +133,7 @@ int main(int argc, const char** argv){
 	header.filesize = sizeof(assetHeader) + header.dataListSize + header.assetListSize;
 
 	std::cout << "Creating asset file..." << std::endl;
-	std::fstream assetFile(argv[1], std::ios::out);
+	std::fstream assetFile(argv[1], std::ios::out | std::ios::binary);
 	assetFile.write(reinterpret_cast<char*>(&header), sizeof(header));
 	for(int j = 0; j < header.assetListEntryAmount; j++){
 		writeEntryToFile(&assetFile, &assets[j]);
