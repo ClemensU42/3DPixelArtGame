@@ -1,0 +1,8 @@
+//
+// Created by Clemens on 09.12.2022.
+//
+
+#ifndef PIXELART3DGAME_TEXTURE_H
+#define PIXELART3DGAME_TEXTURE_H
+
+#endif //PIXELART3DGAME_TEXTURE_H
