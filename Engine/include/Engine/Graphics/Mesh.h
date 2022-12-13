@@ -7,6 +7,7 @@
 
 #include <vector>
 #include "Engine/Graphics/Shader.h"
+#include "Engine/Graphics/Texture.h"
 
 namespace Engine{
 	namespace Graphics{
@@ -19,6 +20,8 @@ namespace Engine{
 
 			std::vector<float> vertices;
 			std::vector<unsigned int> indices;
+
+			Engine::Graphics::Texture* texture;
 
 		public:
 			void loadMeshFromVectors(std::vector<float> verticesArg, std::vector<unsigned int> indicesArg, unsigned int type);

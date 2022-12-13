@@ -105,7 +105,7 @@ int main(int argc, const char** argv){
 		if(j == 0)
 			assets[j].dataPointer = 0;
 		else
-			assets[j].dataPointer = assets[j-1].dataSize;
+			assets[j].dataPointer = assets[j-1].dataPointer + assets[j-1].dataSize;
 		std::ifstream ifs = std::ifstream(*assets[j].identifier, std::ios::binary);
 		if(ifs.is_open()){
 			uint8_t c;

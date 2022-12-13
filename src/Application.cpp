@@ -16,10 +16,11 @@ namespace Engine {
 		Graphics::Shader testShader;
 
 		std::vector<float> vertices = {
-				0.5f, 0.5f, 0.0f,
-				0.5f, -0.5f, 0.0f,
-				-0.5f, -0.5f, 0.0f,
-				-0.5f, 0.5f, 0.0f
+				// positions			// texture coords
+				0.5f, 0.5f, 0.0f,		1.0f, 1.0f,
+				0.5f, -0.5f, 0.0f,		1.0f, 0.0f,
+				-0.5f, -0.5f, 0.0f,		0.0f, 0.0f,
+				-0.5f, 0.5f, 0.0f,		0.0f, 1.0f,
 		};
 
 		std::vector<unsigned int> indices = {
@@ -55,15 +56,18 @@ namespace Engine {
 
 			glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 
-
 			Engine::Asset::openAssetFile("assets.asset");
 
 			Engine::Asset::Asset fragmentShaderAsset = Engine::Asset::getAsset(R"(game\shaders\fallback.frag)");
 			Engine::Asset::Asset vertexShaderAsset = Engine::Asset::getAsset(R"(game\shaders\fallback.vert)");
+			Engine::Graphics::Texture testTexture{};
+			testTexture.loadFromAsset(Engine::Asset::getAsset(R"(game\textures\wall.png)"));
+
 			testShader.loadFromAsset(vertexShaderAsset, fragmentShaderAsset);
 
 			testMesh.loadMeshFromVectors(vertices, indices, GL_STATIC_DRAW);
 			testMesh.shader = &testShader;
+			testMesh.texture = &testTexture;
 		}
 
 		void Application::update() {

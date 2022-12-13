@@ -22,8 +22,11 @@ namespace Engine{
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
 			glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesArg.size() * sizeof(int), indicesArg.data(), type);
 
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 			glEnableVertexAttribArray(0);
+
+			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+			glEnableVertexAttribArray(1);
 
 			this->vertices = verticesArg;
 			this->indices = indicesArg;
@@ -32,6 +35,7 @@ namespace Engine{
 
 		void Mesh::render() {
 			this->shader->use();
+			if(texture) this->texture->bind();
 			glBindVertexArray(this->VAO);
 			glDrawElements(GL_TRIANGLES, this->indices.size(), GL_UNSIGNED_INT, nullptr);
 			glBindVertexArray(0);
